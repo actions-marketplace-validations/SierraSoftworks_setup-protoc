@@ -1,37 +1,154 @@
-name: test
+name: Test
 
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
+  schedule:
+    # Run every Tuesday at 8 AM UTC to catch breakage caused by external changes.
+    - cron: "0 8 * * TUE"
+  workflow_dispatch:
 
 jobs:
-  test:
+  # Build the action and run the unit tests across all supported operating systems.
+  package:
+    name: package (${{ matrix.operating-system }})
     runs-on: ${{ matrix.operating-system }}
 
     strategy:
+      fail-fast: false
       matrix:
         operating-system: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set Node.js 24.x
         uses: actions/setup-node@v4
         with:
           node-version: 24.x
+          cache: npm
 
-      - name: npm install
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: npm lint
-        # check style only once
+      - name: Check formatting
+        # Formatting and linting are platform independent, so only check them once.
         if: matrix.operating-system == 'ubuntu-latest'
         run: npm run format-check
 
-      - name: npm test
+      - name: Lint
+        if: matrix.operating-system == 'ubuntu-latest'
+        run: npm run lint
+
+      - name: Build the action
+        run: npm run package
+
+      - name: Test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm test
+
+  # Exercise the built action end-to-end with its default inputs.
+  integration-defaults:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Build the action
+        run: |
+          npm ci
+          npm run package
+
+      - name: Run action with defaults
+        uses: ./ # Use the action from the local path.
+
+      - name: Run protoc
+        # Verify that protoc was installed
+        run: protoc --version
+
+  # Exercise the built action with pinned versions across all supported operating systems.
+  integration-version:
+    name: integration-version (${{ matrix.version.input }}, ${{ matrix.runs-on }})
+    runs-on: ${{ matrix.runs-on }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+        version:
+          - input: v22.x
+            expected: "libprotoc 22.5"
+          - input: v22.3
+            expected: "libprotoc 22.3"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Build the action
+        run: |
+          npm ci
+          npm run package
+
+      - name: Run action, using protoc patch version wildcard
+        uses: ./
+        with:
+          version: '${{ matrix.version.input }}'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check protoc version
+        shell: bash
+        run: |
+          [[ "$(protoc --version)" == "${{ matrix.version.expected }}" ]]
+
+  # Verify the action fails when given a version that does not exist.
+  integration-invalid-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Build the action
+        run: |
+          npm ci
+          npm run package
+
+      - name: Run action, using invalid version
+        id: setup-protoc
+        continue-on-error: true
+        uses: ./
+        with:
+          version: v10.x
+
+      - name: Fail the job if the action run succeeded
+        if: steps.setup-protoc.outcome == 'success'
+        run: |
+          echo "::error::The action run was expected to fail, but passed!"
+          exit 1

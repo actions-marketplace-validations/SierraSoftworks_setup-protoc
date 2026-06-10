@@ -29,9 +29,9 @@ body:
   - type: input
     id: project-version
     attributes:
-      label: "'arduino/setup-protoc' version"
+      label: "'SierraSoftworks/setup-protoc' version"
       description: |
-        Which version of `arduino/setup-protoc` are you using?
+        Which version of `SierraSoftworks/setup-protoc` are you using?
         _This should be the most recent version available._
     validations:
       required: true
@@ -48,7 +48,7 @@ body:
       label: Issue checklist
       description: Please double-check that you have done each of the following things before submitting the issue.
       options:
-        - label: I searched for previous reports in [the issue tracker](https://github.com/arduino/setup-protoc/issues?q=)
+        - label: I searched for previous reports in [the issue tracker](https://github.com/SierraSoftworks/setup-protoc/issues?q=)
           required: true
         - label: I verified the problem still occurs when using the latest version
           required: true

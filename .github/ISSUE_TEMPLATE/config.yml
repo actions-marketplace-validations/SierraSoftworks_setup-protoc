@@ -4,7 +4,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Learn about using this project
-    url: https://github.com/arduino/setup-protoc#readme
+    url: https://github.com/SierraSoftworks/setup-protoc#readme
     about: Detailed usage documentation is available here.
   - name: Learn about GitHub Actions
     url: https://docs.github.com/actions

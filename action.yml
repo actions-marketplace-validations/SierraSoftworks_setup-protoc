@@ -1,6 +1,6 @@
 name: 'Setup protoc'
 description: 'Download protoc compiler and add it to the PATH'
-author: 'Arduino'
+author: 'SierraSoftworks'
 inputs:
   version:
     description: 'Version to use. Example: 26.2'

@@ -3,7 +3,7 @@ name: Sync Labels
 
 env:
   # See: https://github.com/actions/setup-node/#readme
-  NODE_VERSION: 20.x
+  NODE_VERSION: 24.x
   CONFIGURATIONS_FOLDER: .github/label-configuration-files
   CONFIGURATIONS_ARTIFACT: label-configuration-files
 

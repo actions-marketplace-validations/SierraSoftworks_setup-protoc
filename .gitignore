@@ -4,3 +4,6 @@ node_modules/
 # Ignore built ts files
 __tests__/runner/*
 lib/**/*
+
+# Built distribution (generated and attached during release)
+dist

@@ -1,4 +1,4 @@
-name: 'Setup protoc'
+name: 'Setup protobuf'
 description: 'Download protoc compiler and add it to the PATH'
 author: 'SierraSoftworks'
 inputs:

@@ -10,7 +10,6 @@
 [![Check npm status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-npm-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-npm-task.yml)
 [![Check TypeScript status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-typescript-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-typescript-task.yml)
 [![Check tsconfig status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-tsconfig-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-tsconfig-task.yml)
-[![Check Packaging status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-packaging-ncc-typescript-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-packaging-ncc-typescript-task.yml)
 
 This action makes the `protoc` compiler available to Workflows.
 

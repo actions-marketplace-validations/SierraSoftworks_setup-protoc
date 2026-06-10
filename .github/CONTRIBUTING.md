@@ -41,11 +41,16 @@ npm run test
 
 ### 6. Build
 
-It is necessary to compile the code before it can be used by GitHub Actions. Remember to run these commands before committing any code changes:
+You can compile the code locally to check that it builds:
 
 ```
 task build
 ```
+
+The bundled `dist/` directory is **not** committed to the repository — it is generated
+automatically and attached to the release tags by the `Release` workflow when a GitHub
+release is published. There is no need to build or commit `dist/` as part of a regular
+contribution.
 
 ### 7. Commit
 
@@ -61,5 +66,5 @@ To release a new version of the Action the workflow should be the following:
    (e.g., `uses: SierraSoftworks/setup-protoc@v1` -> `uses: SierraSoftworks/setup-protoc@v2`).
 1. open a PR and request a review.
 1. After PR is merged, create a release, following the `vX.X.X` tag name convention.
-1. After the release, rebase the release branch for that major version (e.g., `v1` branch for the v1.x.x tags) on the tag.
-   If no branch exists for the release's major version, create one.
+1. The `Release` workflow then builds `dist/`, attaches it to the `vX.X.X` tag, and updates the
+   corresponding major version tag (e.g., `v1` for `v1.x.x`) to point at the built artifacts.

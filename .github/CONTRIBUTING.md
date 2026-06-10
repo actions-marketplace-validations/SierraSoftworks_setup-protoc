@@ -44,7 +44,7 @@ npm run test
 You can compile the code locally to check that it builds:
 
 ```
-task build
+npm run package
 ```
 
 The bundled `dist/` directory is **not** committed to the repository — it is generated

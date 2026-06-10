@@ -1,15 +1,6 @@
 # setup-protoc
 
-[![Check npm Dependencies status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-npm-dependencies-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-npm-dependencies-task.yml)
-![test](https://github.com/SierraSoftworks/setup-protoc/workflows/test/badge.svg)
-[![Sync Labels status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/sync-labels-npm.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/sync-labels-npm.yml)
-[![Check Markdown status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-markdown-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-markdown-task.yml)
-[![Check License status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-license.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-license.yml)
-[![Check Taskfiles status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-taskfiles.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-taskfiles.yml)
-[![Integration Tests status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/test-integration.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/test-integration.yml)
-[![Check npm status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-npm-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-npm-task.yml)
-[![Check TypeScript status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-typescript-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-typescript-task.yml)
-[![Check tsconfig status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-tsconfig-task.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/check-tsconfig-task.yml)
+[![Test status](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/test.yml/badge.svg)](https://github.com/SierraSoftworks/setup-protoc/actions/workflows/test.yml)
 
 This action makes the `protoc` compiler available to Workflows.
 

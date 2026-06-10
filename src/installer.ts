@@ -1,34 +1,14 @@
-// Load tempDirectory before it gets wiped by tool-cache
-let tempDirectory = process.env.RUNNER_TEMP || "";
-
 import * as os from "os";
 import * as path from "path";
-import * as util from "util";
-import * as restm from "typed-rest-client/RestClient";
 import * as semver from "semver";
-
-if (!tempDirectory) {
-  let baseLocation;
-  if (process.platform === "win32") {
-    // On windows use the USERPROFILE env variable
-    baseLocation = process.env.USERPROFILE || "C:\\";
-  } else {
-    if (process.platform === "darwin") {
-      baseLocation = "/Users";
-    } else {
-      baseLocation = "/home";
-    }
-  }
-  tempDirectory = path.join(baseLocation, "actions", "temp");
-}
-
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
+import { HttpClient } from "@actions/http-client";
 
 const osPlat: string = os.platform();
 const osArch: string = os.arch();
 
-// This regex is slighty modified from https://semver.org/ to allow only MINOR.PATCH notation.
+// This regex is slightly modified from https://semver.org/ to allow only MINOR.PATCH notation.
 const semverRegex =
   /^(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/gm;
 
@@ -51,16 +31,15 @@ export async function getProtoc(
   if (targetVersion) {
     version = targetVersion;
   }
-  process.stdout.write("Getting protoc version: " + version + os.EOL);
+  core.info(`Getting protoc version: ${version}`);
 
   // look if the binary is cached
-  let toolPath: string;
-  toolPath = tc.find("protoc", version);
+  let toolPath = tc.find("protoc", version);
 
   // if not: download, extract and cache
   if (!toolPath) {
     toolPath = await downloadRelease(version);
-    process.stdout.write("Protoc cached under " + toolPath + os.EOL);
+    core.info(`Protoc cached under ${toolPath}`);
   }
 
   // expose outputs
@@ -74,12 +53,8 @@ export async function getProtoc(
 async function downloadRelease(version: string): Promise<string> {
   // Download
   const fileName: string = getFileName(version, osPlat, osArch);
-  const downloadUrl: string = util.format(
-    "https://github.com/protocolbuffers/protobuf/releases/download/%s/%s",
-    version,
-    fileName,
-  );
-  process.stdout.write("Downloading archive: " + downloadUrl + os.EOL);
+  const downloadUrl = `https://github.com/protocolbuffers/protobuf/releases/download/${version}/${fileName}`;
+  core.info(`Downloading archive: ${downloadUrl}`);
 
   let downloadPath: string | null = null;
   try {
@@ -91,7 +66,9 @@ async function downloadRelease(version: string): Promise<string> {
         `Failed to download version ${version}: ${err.name}, ${err.message} - ${err.httpStatusCode}`,
       );
     }
-    throw new Error(`Failed to download version ${version}: ${err}`);
+    throw new Error(
+      `Failed to download version ${version}: ${err instanceof Error ? err.message : err}`,
+    );
   }
 
   // Extract
@@ -155,16 +132,16 @@ export function getFileName(
   // The name of the Windows package has a different naming pattern
   if (osPlatf == "win32") {
     const arch: string = osArc == "x64" ? "64" : "32";
-    return util.format("protoc-%s-win%s.zip", version, arch);
+    return `protoc-${version}-win${arch}.zip`;
   }
 
   const suffix = fileNameSuffix(osArc);
 
   if (osPlatf == "darwin") {
-    return util.format("protoc-%s-osx-%s.zip", version, suffix);
+    return `protoc-${version}-osx-${suffix}.zip`;
   }
 
-  return util.format("protoc-%s-linux-%s.zip", version, suffix);
+  return `protoc-${version}-linux-${suffix}.zip`;
 }
 
 // Retrieve a list of versions scraping tags from the Github API
@@ -172,22 +149,18 @@ async function fetchVersions(
   includePreReleases: boolean,
   repoToken: string,
 ): Promise<string[]> {
-  let rest: restm.RestClient;
-  if (repoToken != "") {
-    rest = new restm.RestClient("setup-protoc", "", [], {
-      headers: { Authorization: "Bearer " + repoToken },
-    });
-  } else {
-    rest = new restm.RestClient("setup-protoc");
-  }
+  const http = new HttpClient(
+    "setup-protoc",
+    [],
+    repoToken ? { headers: { Authorization: `Bearer ${repoToken}` } } : {},
+  );
 
   let tags: IProtocRelease[] = [];
   for (let pageNum = 1, morePages = true; morePages; pageNum++) {
-    const p = await rest.get<IProtocRelease[]>(
-      "https://api.github.com/repos/protocolbuffers/protobuf/releases?page=" +
-        pageNum,
+    const response = await http.getJson<IProtocRelease[]>(
+      `https://api.github.com/repos/protocolbuffers/protobuf/releases?page=${pageNum}`,
     );
-    const nextPage: IProtocRelease[] = p.result || [];
+    const nextPage: IProtocRelease[] = response.result || [];
     if (nextPage.length > 0) {
       tags = tags.concat(nextPage);
     } else {
@@ -197,7 +170,7 @@ async function fetchVersions(
 
   return tags
     .filter((tag) => tag.tag_name.match(/v\d+\.[\w.]+/g))
-    .filter((tag) => includePrerelease(tag.prerelease, includePreReleases))
+    .filter((tag) => includePreReleases || !tag.prerelease)
     .map((tag) => tag.tag_name.replace("v", ""));
 }
 
@@ -265,11 +238,4 @@ function normalizeVersion(version: string): string {
   }
 
   return version;
-}
-
-function includePrerelease(
-  isPrerelease: boolean,
-  includePrereleases: boolean,
-): boolean {
-  return includePrereleases || !isPrerelease;
 }

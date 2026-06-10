@@ -58,7 +58,7 @@ Thanks!
 To release a new version of the Action the workflow should be the following:
 
 1. If the release will increment the major version, update the action refs in the examples in README.md
-   (e.g., `uses: arduino/setup-protoc@v1` -> `uses: arduino/setup-protoc@v2`).
+   (e.g., `uses: SierraSoftworks/setup-protoc@v1` -> `uses: SierraSoftworks/setup-protoc@v2`).
 1. open a PR and request a review.
 1. After PR is merged, create a release, following the `vX.X.X` tag name convention.
 1. After the release, rebase the release branch for that major version (e.g., `v1` branch for the v1.x.x tags) on the tag.

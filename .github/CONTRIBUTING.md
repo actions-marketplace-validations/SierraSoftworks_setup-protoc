@@ -7,7 +7,7 @@
 [**npm**](https://www.npmjs.com/) is used for dependency management.
 
 Follow the installation instructions here:<br />
-https://nodejs.dev/en/download
+https://nodejs.org/en/download
 
 ### 2. Install dependencies
 

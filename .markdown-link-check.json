@@ -7,6 +7,15 @@
       }
     }
   ],
+  "ignorePatterns": [
+    {
+      "comment": "npmjs.com and typescriptlang.org block automated link checkers with HTTP 403",
+      "pattern": "^https://www\\.npmjs\\.com/"
+    },
+    {
+      "pattern": "^https://www\\.typescriptlang\\.org/"
+    }
+  ],
   "retryOn429": true,
   "retryCount": 3,
   "aliveStatusCodes": [200, 206]

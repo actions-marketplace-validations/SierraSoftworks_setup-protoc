@@ -5,12 +5,18 @@ on:
   push:
     paths:
       - ".github/workflows/test-integration.ya?ml"
-      - "dist/**"
+      - "src/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
       - "action.yml"
   pull_request:
     paths:
       - ".github/workflows/test-integration.ya?ml"
-      - "dist/**"
+      - "src/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
       - "action.yml"
   schedule:
     # Run every Tuesday at 8 AM UTC to catch breakage caused by external changes.
@@ -25,6 +31,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Build the action
+        run: |
+          npm ci
+          npm run package
 
       - name: Run action with defaults
         uses: ./ # Use the action from the local path.
@@ -55,6 +72,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Build the action
+        run: |
+          npm ci
+          npm run package
+
       - name: Run action, using protoc patch version wildcard
         uses: ./
         with:
@@ -72,6 +100,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Build the action
+        run: |
+          npm ci
+          npm run package
 
       - name: Run action, using invalid version
         id: setup-protoc
